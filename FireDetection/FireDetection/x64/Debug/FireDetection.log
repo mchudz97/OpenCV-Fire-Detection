@@ -1,0 +1,3 @@
+﻿  Detection.cpp
+  cvui.h: compiling implementation because of CVUI_IMPLEMENTATION. See: https://dovyski.github.io/cvui/usage/
+  FireDetection.vcxproj -> C:\Users\mchud\source\repos\OpenCV-Fire-Detection\FireDetection\x64\Debug\FireDetection.exe
