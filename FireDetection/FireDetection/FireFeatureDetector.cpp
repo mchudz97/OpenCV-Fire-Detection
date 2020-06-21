@@ -21,23 +21,20 @@ FireFeatureDetector::FireFeatureDetector(Mat toCheck) {
 
 			b = toCheck.at<Vec3b>(i, j)[0];
 
-			y = 16 + r * 65.481 + g * 128.553 + b *
-				24.996;
-			cb = 128 + r * -37.797 - g * 74.203 + b *
-				112.0;
-			cr = 128 + r * 112.00 + g * -93.7864 + b *
-				-18.214;
-			
-			YCbCrCols.push_back(Vec3b(y,cb,cr));
-			
+			y = 16 + r * 65.481 + g * 128.553 + b * 24.996;
+			cb = 128 + r * -37.797 - g * 74.203 + b * 112.0;
+			cr = 128 + r * 112.00 + g * -93.7864 + b * -18.214;
 
-			if (r > g && g > b && r > 190 && g > 100 && b < 140  && y >= cb && y >= cb && cr >= cb) {
+			YCbCrCols.push_back(Vec3b(y, cb, cr));
+
+
+			if (r > g && g > b && r > 190 && g > 100 && b < 140 && y >= cb && y >= cb && cr >= cb) {
 
 				YCbCrMat.at<Vec3b>(i, j) = Vec3b(y, cb, cr);
 
 				detected = true;
 
-			}		
+			}
 
 		}
 
