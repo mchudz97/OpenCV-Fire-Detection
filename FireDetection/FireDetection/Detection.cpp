@@ -17,6 +17,7 @@ int mixtures;
 int history;
 float minArea = 0;
 Rect FireRoi;
+int currFile;
 
 void trackbarCallback(int h, int m) {
 
@@ -43,7 +44,7 @@ int main() {
 
     Gui g = Gui("Detection Settings");
 
-    videocap.open("2.mp4");
+    videocap.open("1.mp4");
 
     while (waitKey(15) != 27) {
 
@@ -55,6 +56,8 @@ int main() {
 
         videocap >> frame;
         FireFeatureDetector ffd = FireFeatureDetector(frame);
+
+        imshow("ycbcr", ffd.YCbCrMat);
 
         fire = ffd.YCbCrMat;
         //GaussianBlur(fire, fire, Size(5, 5), 3);
@@ -71,7 +74,7 @@ int main() {
 
                 for (int j = 0; j < contours[i].size(); j++) {
 
-                    frame.at<Vec3b>(contours[i][j]) = Vec3b(255, 0, 0);
+                    frame.at<Vec3b>(contours[i][j]) = Vec3b(0, 255, 0);
 
                 }
 
@@ -81,6 +84,19 @@ int main() {
 
         }
 
+        if (contours.size() != 0) {
+
+            putText(frame, "Fire detected!", Point(frame.rows / 2, 20), 1, 1, Scalar(0, 0, 255));
+
+        }
+
+        if (currFile != g.vidChoice) {
+
+            videocap.release();
+            currFile = g.vidChoice;
+            videocap.open(g.queue[currFile]);
+
+        }
 
         //HsiMat hsimat = HsiMat(frame);
         imshow(WINDOW_NAME, frame);
