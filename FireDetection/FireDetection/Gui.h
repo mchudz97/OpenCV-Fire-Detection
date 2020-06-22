@@ -14,11 +14,13 @@ public:
 	int mixtures;
 	int history;
 	int vidChoice;
+	float area;
+	float smokeError;
+	bool withSmoke;
 	vector<String> queue;
 	String winName;
 	Gui(String winName);
 	void show();
-	void getPlayerButtonValue();
 
 };
 

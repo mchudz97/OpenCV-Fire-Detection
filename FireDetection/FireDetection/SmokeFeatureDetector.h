@@ -5,12 +5,11 @@
 using namespace cv;
 using namespace std;
 
-class FireFeatureDetector {
+class SmokeFeatureDetector {
 
 public:
 
-	Mat YCbCrMat;
-	FireFeatureDetector(Mat toYCbCr);
+	Mat Smoke;
+	SmokeFeatureDetector(Mat mat, float alpha);
 
 };
-

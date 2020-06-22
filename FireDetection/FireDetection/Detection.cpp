@@ -5,6 +5,7 @@
 #include <opencv2\imgproc.hpp>
 #define CVUI_IMPLEMENTATION
 #include "Gui.h"
+#include "SmokeFeatureDetector.h"
 
 using namespace cv;
 using namespace std;
@@ -13,11 +14,26 @@ String WINDOW_NAME = "Detector";
 VideoCapture videocap;
 Mat frame, frame_gray, fire;
 Ptr<BackgroundSubtractorMOG2> bsmog2;
+
 int mixtures;
 int history;
-float minArea = 0;
-Rect FireRoi;
 int currFile;
+
+void drawRects(Mat mat, vector<vector<Point>> points, float bySize) {
+
+    
+    for (int i = 0; i < points.size(); i++) {
+
+        if (contourArea(points[i]) >= bySize) {
+
+            Rect bRect = boundingRect(points[i]);
+            rectangle(mat, bRect, (0, 255, 0));
+
+        }
+
+    }
+
+}
 
 void trackbarCallback(int h, int m) {
 
@@ -33,8 +49,6 @@ void trackbarCallback(int h, int m) {
 
 }
 
-
-
 int main() {
 
 
@@ -46,6 +60,14 @@ int main() {
 
     videocap.open("1.mp4");
 
+    if (!videocap.isOpened()) {
+
+        bsmog2.release();
+        videocap.release();
+        return -1;
+
+    }
+
     while (waitKey(15) != 27) {
 
         g.show();
@@ -54,56 +76,76 @@ int main() {
 
         vector<vector<Point>> contours;
 
+        
+        
+
         videocap >> frame;
-        FireFeatureDetector ffd = FireFeatureDetector(frame);
 
-        imshow("ycbcr", ffd.YCbCrMat);
+        if (frame.empty()) {
 
-        fire = ffd.YCbCrMat;
-        //GaussianBlur(fire, fire, Size(5, 5), 3);
-        cvtColor(fire, frame_gray, COLOR_BGR2GRAY);
-
-        bsmog2->apply(frame_gray, frame_gray);
-        findContours(frame_gray, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, Point(0, 0));
-
-
-        for (int i = 0; i < contours.size(); i++) {
-
-            if (contourArea(contours[i]) > minArea) {
-
-
-                for (int j = 0; j < contours[i].size(); j++) {
-
-                    frame.at<Vec3b>(contours[i][j]) = Vec3b(0, 255, 0);
-
-                }
-
-
-
-            }
+            videocap.release();
+            videocap.open(g.queue[currFile]);
 
         }
 
+        GaussianBlur(frame, frame, Size(3, 3), 3);
+        erode(frame, frame, MORPH_CROSS);
+         
+        FireFeatureDetector ffd = FireFeatureDetector(frame);
+        
+        imshow("ycbcr", ffd.YCbCrMat);
+
+        fire = ffd.YCbCrMat;
+        if (g.withSmoke) {
+
+            SmokeFeatureDetector sfd = SmokeFeatureDetector(frame, g.smokeError);
+            imshow("Smoke", sfd.Smoke);
+            addWeighted(fire, .5, sfd.Smoke, .5, 0.0, fire);
+
+        }
+
+        else {
+
+            destroyWindow("Smoke");
+
+        }
+
+        cvtColor(fire, frame_gray, COLOR_BGR2GRAY);
+        bsmog2->apply(frame_gray, frame_gray);
+        findContours(frame_gray, contours, RETR_LIST, CHAIN_APPROX_NONE);
+        
         if (contours.size() != 0) {
 
-            putText(frame, "Fire detected!", Point(frame.rows / 2, 20), 1, 1, Scalar(0, 0, 255));
+            putText(frame, "Fire detected!", Point(20, 20), 1, 1, Scalar(0, 0, 255));
+            for (int i = 0; i < contours.size(); i++) {
+
+                drawContours(frame, contours, i, (0, 0, 255));
+
+            }
+
+            drawRects(frame, contours, g.area);
 
         }
 
         if (currFile != g.vidChoice) {
 
             videocap.release();
+            bsmog2.release();
+            bsmog2 = createBackgroundSubtractorMOG2();
+            bsmog2->setNMixtures(g.mixtures);
+            bsmog2->setHistory(g.history);
             currFile = g.vidChoice;
             videocap.open(g.queue[currFile]);
 
         }
 
-        //HsiMat hsimat = HsiMat(frame);
         imshow(WINDOW_NAME, frame);
-
 
     }
 
+    bsmog2.release();
+    destroyAllWindows();
+    videocap.release();
     return 0;
 
 }
