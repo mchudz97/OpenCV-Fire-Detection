@@ -19,7 +19,7 @@ FireFeatureDetector::FireFeatureDetector(Mat toCheck) {
 			cb = 128 + (r * -37.797 - g * 74.203 + b * 112.0)/256;
 			cr = 128 + (r * 112.00 + g * -93.7864 + b * -18.214)/256;
 
-			if (r>100 && r > g && g > b && r > 190 && g > 100 && b < 140 && y >= cb && cr >= cb) {
+			if ( r > g && g > b && r > 190 && g > 100 && b < 140 && y >= cb && cr >= cb ) {
 
 				YCbCrMat.at<Vec3b>(i, j) = Vec3b(y, cb, cr);
 				
