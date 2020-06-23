@@ -10,6 +10,6 @@ class SmokeFeatureDetector {
 public:
 
 	Mat Smoke;
-	SmokeFeatureDetector(Mat mat, float alpha);
+	SmokeFeatureDetector(Mat mat, float alpha, float grayMin, float grayMax);
 
 };

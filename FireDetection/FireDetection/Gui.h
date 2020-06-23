@@ -1,4 +1,3 @@
-
 #include <opencv2\opencv.hpp>
 #include "cvui.h"
 
@@ -16,6 +15,8 @@ public:
 	int vidChoice;
 	float area;
 	float smokeError;
+	float grayMin;
+	float grayMax;
 	bool withSmoke;
 	vector<String> queue;
 	String winName;

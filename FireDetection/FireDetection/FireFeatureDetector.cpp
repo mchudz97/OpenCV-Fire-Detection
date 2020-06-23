@@ -1,8 +1,6 @@
 #include "FireFeatureDetector.h"
 
 
-
-
 FireFeatureDetector::FireFeatureDetector(Mat toCheck) {
 
 	float r, g, b, y, cb, cr;
@@ -24,6 +22,7 @@ FireFeatureDetector::FireFeatureDetector(Mat toCheck) {
 			if (r>100 && r > g && g > b && r > 190 && g > 100 && b < 140 && y >= cb && cr >= cb) {
 
 				YCbCrMat.at<Vec3b>(i, j) = Vec3b(y, cb, cr);
+				
 
 			}
 

@@ -1,15 +1,13 @@
-#include <opencv2\videoio.hpp>
-#include <opencv2\highgui.hpp>
-#include <opencv2\video\tracking.hpp>
 #include "SmokeFeatureDetector.h"
+
 
 using namespace cv;
 using namespace std;
 
 
-SmokeFeatureDetector::SmokeFeatureDetector(Mat mat, float alpha) {
+SmokeFeatureDetector::SmokeFeatureDetector(Mat mat, float alpha, float grayMin, float grayMax) {
 
-	float r, g, b, y, cb, cr;
+	float r, g, b;
 	Smoke = Mat::zeros(mat.rows, mat.cols, mat.type());
 
 	for (int i = 0; i < mat.rows; i++) {
@@ -22,9 +20,9 @@ SmokeFeatureDetector::SmokeFeatureDetector(Mat mat, float alpha) {
 			b = mat.at<Vec3b>(i, j)[0];
 
 			if (abs(r - g) <= alpha && abs(r - b) <= alpha  && abs(b - g) <= alpha
-				&& (r + g + b) / 3.0f >= 15 && (r + g + b) / 3.0f <= 220) {
+				&& (r + g + b) / 3.0f >= grayMin && (r + g + b) / 3.0f <= grayMax) {
 
-				Smoke.at<Vec3b>(i, j) = Vec3b(0, 0, 255);
+				Smoke.at<Vec3b>(i, j) = mat.at<Vec3b>(i, j);
 
 			}
 
