@@ -65,6 +65,7 @@ int main() {
 
         bsmog2.release();
         videocap.release();
+        destroyAllWindows();
         return -1;
 
     }
