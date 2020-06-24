@@ -46,6 +46,7 @@ void trackbarCallback(int h, int m) {
 
     if (h != history || m != mixtures) {
 
+        bsmog2.release();
         bsmog2 = createBackgroundSubtractorMOG2();
         bsmog2->setHistory(h);
         bsmog2->setNMixtures(m);
